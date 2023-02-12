@@ -40,8 +40,14 @@ class TaskListState extends State<TaskList> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Expanded(child: ListView(children: _makeTaskWidgets())),
-            TodoForm(
-              handleChange: (value) => print(value),
+            TaskForm(
+              handleChange: (value) {
+                tasks.add(
+                    Task(title: value, information: "", state: TaskState.todo));
+                setState(() {
+                  tasks = tasks;
+                });
+              },
             )
           ],
         ),
