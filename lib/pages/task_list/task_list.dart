@@ -18,9 +18,11 @@ class TaskListState extends State<TaskList> {
   List<Widget> _makeTaskWidgets() {
     return tasks.map((task) {
       return ListTile(
-          trailing: ElevatedButton(
-              onPressed: () => {}, child: const Icon(Icons.edit)),
-          leading: const Icon(Icons.map),
+          trailing: IconButton(
+              onPressed: () => {},
+              icon: const Icon(Icons.edit),
+              color: Colors.blue),
+          leading: const Icon(Icons.event),
           title: Text(task.title));
     }).toList();
   }
