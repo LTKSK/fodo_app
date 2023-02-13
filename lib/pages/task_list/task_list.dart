@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'task_form.dart';
+import 'task_item.dart';
 import '../../models/task.dart';
 
 const _disclamer = '''免責事項
@@ -20,13 +22,7 @@ class TaskListState extends State<TaskList> {
 
   List<Widget> _makeTaskWidgets() {
     return tasks.map((task) {
-      return ListTile(
-          trailing: IconButton(
-              onPressed: () => {},
-              icon: const Icon(Icons.edit),
-              color: Colors.blue),
-          leading: const Icon(Icons.event),
-          title: Text(task.title));
+      return TaskItem(task: task);
     }).toList();
   }
 
@@ -59,10 +55,7 @@ class TaskListState extends State<TaskList> {
             Expanded(child: ListView(children: _makeTaskWidgets())),
             TaskForm(
               handleSubmit: (value) {
-                // tasks.add(
-                //     Task(title: value, information: "", state: TaskState.todo));
                 setState(() {
-                  // tasks = tasks;
                   tasks = [
                     ...tasks,
                     Task(title: value, information: "", state: TaskState.todo)
