@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'task_form.dart';
 import '../../models/task.dart';
+
+const _disclamer = '''免責事項
+本アプリケーションを使用したことによって生じた
+いかなる損害についても、開発者は一切の責任を負いません。
+''';
 
 class TaskList extends StatefulWidget {
   const TaskList({super.key});
@@ -10,10 +16,7 @@ class TaskList extends StatefulWidget {
 }
 
 class TaskListState extends State<TaskList> {
-  List<Task> tasks = [
-    const Task(title: "task1", information: "", state: TaskState.todo),
-    const Task(title: "task2", information: "", state: TaskState.todo),
-  ];
+  List<Task> tasks = [];
 
   List<Widget> _makeTaskWidgets() {
     return tasks.map((task) {
@@ -33,7 +36,19 @@ class TaskListState extends State<TaskList> {
       appBar: AppBar(
         title: const Text("Todos"),
         actions: [
-          IconButton(onPressed: () => {}, icon: const Icon(Icons.save))
+          IconButton(
+              onPressed: () async {
+                final info = await PackageInfo.fromPlatform();
+                if (context.mounted) {
+                  showLicensePage(
+                    context: context,
+                    applicationName: info.appName,
+                    applicationVersion: info.version,
+                    applicationLegalese: _disclamer,
+                  );
+                }
+              },
+              icon: const Icon(Icons.info))
         ],
       ),
       body: Padding(
@@ -43,11 +58,15 @@ class TaskListState extends State<TaskList> {
           children: [
             Expanded(child: ListView(children: _makeTaskWidgets())),
             TaskForm(
-              handleChange: (value) {
-                tasks.add(
-                    Task(title: value, information: "", state: TaskState.todo));
+              handleSubmit: (value) {
+                // tasks.add(
+                //     Task(title: value, information: "", state: TaskState.todo));
                 setState(() {
-                  tasks = tasks;
+                  // tasks = tasks;
+                  tasks = [
+                    ...tasks,
+                    Task(title: value, information: "", state: TaskState.todo)
+                  ];
                 });
               },
             )
