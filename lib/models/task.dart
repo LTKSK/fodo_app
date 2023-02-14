@@ -35,12 +35,12 @@ String taskStateStringFrom(TaskState state) {
 class Task {
   final int? id;
   final String title;
-  final String information;
+  final String description;
   final TaskState state;
 
   const Task(
       {this.id,
       required this.title,
-      required this.information,
+      required this.description,
       required this.state});
 }

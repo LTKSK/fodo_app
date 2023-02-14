@@ -5,10 +5,10 @@ class TaskForm extends StatefulWidget {
   const TaskForm({super.key, required this.handleSubmit});
 
   @override
-  _TaskFormState createState() => _TaskFormState();
+  TaskFormState createState() => TaskFormState();
 }
 
-class _TaskFormState extends State<TaskForm> {
+class TaskFormState extends State<TaskForm> {
   String _title = "";
 
   void handleTitle(String title) {
@@ -25,12 +25,7 @@ class _TaskFormState extends State<TaskForm> {
       decoration: InputDecoration(
           labelText: "作成するTaskの名前を入力してください",
           suffixIcon: IconButton(
-            onPressed: () {
-              widget.handleSubmit(_title);
-              setState(() {
-                _title = "";
-              });
-            },
+            onPressed: () => {widget.handleSubmit(_title)},
             icon: const Icon(Icons.add),
             color: Colors.blue,
           )),

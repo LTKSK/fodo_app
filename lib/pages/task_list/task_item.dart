@@ -16,7 +16,7 @@ class TaskItem extends StatelessWidget {
         children: [
           SlidableAction(
             onPressed: (ctx) => {},
-            backgroundColor: const Color(0xFF7BC043),
+            backgroundColor: const Color.fromARGB(255, 167, 167, 167),
             foregroundColor: Colors.white,
             icon: Icons.edit,
             label: '編集',

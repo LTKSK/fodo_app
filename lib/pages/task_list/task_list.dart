@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'task_form.dart';
 import 'task_item.dart';
 import '../../models/task.dart';
@@ -58,7 +57,7 @@ class TaskListState extends State<TaskList> {
                 setState(() {
                   tasks = [
                     ...tasks,
-                    Task(title: value, information: "", state: TaskState.todo)
+                    Task(title: value, description: "", state: TaskState.todo)
                   ];
                 });
               },
