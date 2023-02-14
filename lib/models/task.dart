@@ -4,13 +4,13 @@ enum TaskState {
   done,
 }
 
-TaskState taskStateFrom(String stateStr) {
-  switch (stateStr) {
-    case "todo":
+TaskState taskStateFromNum(int number) {
+  switch (number) {
+    case 0:
       return TaskState.todo;
-    case "doing":
+    case 1:
       return TaskState.doing;
-    case "done":
+    case 2:
       return TaskState.done;
     default:
       // TODO: 独自定義に置き換え
@@ -18,14 +18,14 @@ TaskState taskStateFrom(String stateStr) {
   }
 }
 
-String taskStateStringFrom(TaskState state) {
+int taskStateNumFrom(TaskState state) {
   switch (state) {
     case TaskState.todo:
-      return "todo";
+      return 0;
     case TaskState.doing:
-      return "doing";
+      return 1;
     case TaskState.done:
-      return "done";
+      return 2;
     default:
       // TODO: 独自定義に置き換え
       throw StateError('不明なstateです');
@@ -33,13 +33,13 @@ String taskStateStringFrom(TaskState state) {
 }
 
 class Task {
-  final int? id;
+  final int id;
   final String title;
   final String description;
   final TaskState state;
 
   const Task(
-      {this.id,
+      {required this.id,
       required this.title,
       required this.description,
       required this.state});

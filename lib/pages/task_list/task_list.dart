@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'task_form.dart';
 import 'task_item.dart';
-import '../../models/task.dart';
-
-const _disclamer = '''免責事項
-本アプリケーションを使用したことによって生じた
-いかなる損害についても、開発者は一切の責任を負いません。
-''';
+import 'license_info_button.dart';
+import 'package:fodo_app/models/task.dart';
+import 'package:fodo_app/repositories/task_repository.dart';
 
 class TaskList extends StatefulWidget {
   const TaskList({super.key});
@@ -26,25 +22,34 @@ class TaskListState extends State<TaskList> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    TaskRepository.all().then((value) {
+      print("in!");
+      print(value);
+    });
+    // TODO: fetch tasks from database
+  }
+
+  void createTask(String title) async {
+    setState(() {
+      tasks = [
+        ...tasks,
+        Task(id: 1, title: title, description: "", state: TaskState.todo)
+      ];
+    });
+  }
+
+  void updateTask(String title, String description, TaskState state) async {}
+
+  void deleteTask(int id) async {}
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Todos"),
-        actions: [
-          IconButton(
-              onPressed: () async {
-                final info = await PackageInfo.fromPlatform();
-                if (context.mounted) {
-                  showLicensePage(
-                    context: context,
-                    applicationName: info.appName,
-                    applicationVersion: info.version,
-                    applicationLegalese: _disclamer,
-                  );
-                }
-              },
-              icon: const Icon(Icons.info))
-        ],
+        actions: const [LicenseInfoButton()],
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -52,16 +57,7 @@ class TaskListState extends State<TaskList> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Expanded(child: ListView(children: _makeTaskWidgets())),
-            TaskForm(
-              handleSubmit: (value) {
-                setState(() {
-                  tasks = [
-                    ...tasks,
-                    Task(title: value, description: "", state: TaskState.todo)
-                  ];
-                });
-              },
-            )
+            TaskForm(handleSubmit: createTask)
           ],
         ),
       ),
