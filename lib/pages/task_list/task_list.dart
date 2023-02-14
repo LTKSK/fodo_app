@@ -25,18 +25,20 @@ class TaskListState extends State<TaskList> {
   void initState() {
     super.initState();
     TaskRepository.all().then((value) {
-      print("in!");
-      print(value);
+      setState(() {
+        tasks = value;
+      });
     });
-    // TODO: fetch tasks from database
   }
 
+  /// repository経由でTaskを作って、作ったTaskをStateに設定する
   void createTask(String title) async {
+    final task = await TaskRepository.createTask(
+      title: title,
+      descrption: "",
+    );
     setState(() {
-      tasks = [
-        ...tasks,
-        Task(id: 1, title: title, description: "", state: TaskState.todo)
-      ];
+      tasks = [...tasks, task];
     });
   }
 
