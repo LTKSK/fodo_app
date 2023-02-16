@@ -1,16 +1,18 @@
 import 'package:sqflite/sqflite.dart' as sql;
+import 'package:intl/intl.dart';
 import 'package:fodo_app/repositories/database/database_sqlite.dart';
 import 'package:fodo_app/models/task.dart';
 
 class TaskRepository {
   ///sqliteのqueryが返すtasksテーブルのレコードデータをTaskに変換して返す
-  static Task _queryResultToTask(Map<String, Object?> data) {
+  static Task _queryResultToTask(Map<String, dynamic> data) {
     return Task(
-      id: data['id'] as int,
-      title: data['title'] as String,
-      description: data['description'] as String,
-      state: taskStateFromNum(data['state'] as int),
-    );
+        id: data['id'] as int,
+        title: data['title'] as String,
+        description: data['description'] as String,
+        state: taskStateFromNum(data['state'] as int),
+        createdAt: DateFormat('yyyy/MM/dd')
+            .format(DateTime.parse(data["created_at"]).toLocal()));
   }
 
   static Future<Task> createTask({
@@ -20,11 +22,22 @@ class TaskRepository {
     final db = await SqliteHelper.db();
 
     final stateNum = taskStateNumFrom(TaskState.todo);
-    final data = {'title': title, 'description': descrption, 'state': stateNum};
+    final now = DateTime.now();
+    final data = {
+      'title': title,
+      'description': descrption,
+      'state': stateNum,
+      'created_at': now.toString(),
+      'updated_at': now.toString(),
+    };
     final id = await db.insert('tasks', data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
     return Task(
-        id: id, title: title, description: descrption, state: TaskState.todo);
+        id: id,
+        title: title,
+        description: descrption,
+        state: TaskState.todo,
+        createdAt: DateFormat('yyyy/MM/dd').format(now.toLocal()));
   }
 
   static Future<List<Task>> all() async {
@@ -44,7 +57,7 @@ class TaskRepository {
     final data = {
       'title': title,
       'description': descrption,
-      'createdAt': DateTime.now().toString()
+      'updated_at': DateTime.now().toString()
     };
 
     return await db.update('tasks', data, where: "id = ?", whereArgs: [id]);

@@ -37,10 +37,12 @@ class Task {
   final String title;
   final String description;
   final TaskState state;
+  final String createdAt;
 
   const Task(
       {required this.id,
       required this.title,
       required this.description,
-      required this.state});
+      required this.state,
+      required this.createdAt});
 }

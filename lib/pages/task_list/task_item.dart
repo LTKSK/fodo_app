@@ -30,8 +30,11 @@ class TaskItem extends StatelessWidget {
           ),
         ],
       ),
-      child:
-          ListTile(leading: const Icon(Icons.event), title: Text(task.title)),
+      child: ListTile(
+        leading: const Icon(Icons.event),
+        title: Text(task.title),
+        subtitle: Text(task.createdAt),
+      ),
     );
   }
 }
