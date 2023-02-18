@@ -5,7 +5,30 @@ import '../../models/task.dart';
 
 class TaskItem extends StatelessWidget {
   final Task task;
-  const TaskItem({super.key, required this.task});
+  final void Function() onStateChange;
+  const TaskItem({super.key, required this.task, required this.onStateChange});
+
+  Color _iconColorFromState(TaskState state) {
+    switch (state) {
+      case TaskState.todo:
+        return Colors.blueGrey;
+      case TaskState.doing:
+        return Colors.orange;
+      case TaskState.done:
+        return Colors.green;
+    }
+  }
+
+  Icon _iconFromState(TaskState state) {
+    switch (state) {
+      case TaskState.todo:
+        return const Icon(Icons.calendar_today);
+      case TaskState.doing:
+        return const Icon(Icons.sports_martial_arts);
+      case TaskState.done:
+        return const Icon(Icons.done_outline);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +59,17 @@ class TaskItem extends StatelessWidget {
           ),
         ],
       ),
-      child: ListTile(
-        leading: const Icon(Icons.event),
-        title: Text(task.title),
-        subtitle: Text(task.createdAt),
-      ),
+      child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: ListTile(
+            iconColor: _iconColorFromState(task.state),
+            leading: IconButton(
+                icon: _iconFromState(task.state),
+                onPressed: () => {onStateChange()}),
+            title: Text(task.title),
+            subtitle: Text(task.createdAt),
+            tileColor: const Color.fromARGB(26, 132, 132, 132),
+          )),
     );
   }
 }

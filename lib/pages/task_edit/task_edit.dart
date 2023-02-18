@@ -10,6 +10,27 @@ class TaskEdit extends StatelessWidget {
     // TODO, 戻るボタン
     // TODO, description修正
     // TODO, state更新
-    return Text(task.title);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('${task.title}を編集'),
+      ),
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            maxLength: 32,
+            maxLines: 1,
+            decoration: InputDecoration(
+                labelText: "taskの名前を更新する",
+                suffixIcon: IconButton(
+                  onPressed: () => {},
+                  icon: const Icon(Icons.save),
+                  color: Colors.blue,
+                )),
+            onChanged: (value) => {},
+          )
+        ],
+      ),
+    );
   }
 }

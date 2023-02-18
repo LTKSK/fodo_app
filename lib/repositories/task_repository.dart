@@ -52,18 +52,18 @@ class TaskRepository {
   }
 
   static Future<int> update(
-      int id, String title, String descrption, TaskState state) async {
+      {required int id,
+      required String title,
+      required TaskState state}) async {
     final db = await SqliteHelper.db();
 
     final data = {
       'title': title,
-      'description': descrption,
       'state': taskStateNumberFromState(state),
       'updated_at': DateTime.now().toString()
     };
 
     return await db.update('tasks', data, where: "id = ?", whereArgs: [id]);
-    ;
   }
 
   // Delete

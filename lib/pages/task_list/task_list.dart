@@ -17,7 +17,17 @@ class TaskListState extends State<TaskList> {
 
   List<Widget> _makeTaskWidgets() {
     return tasks.map((task) {
-      return TaskItem(task: task);
+      return TaskItem(
+          task: task,
+          onStateChange: () async {
+            final updatedTask = await _changeTaskStateToNext(task);
+            setState(() {
+              tasks = tasks.map((task) {
+                if (task.id == updatedTask.id) return updatedTask;
+                return task;
+              }).toList();
+            });
+          });
     }).toList();
   }
 
@@ -32,7 +42,7 @@ class TaskListState extends State<TaskList> {
   }
 
   /// repository経由でTaskを作って、作ったTaskをStateに設定する
-  void createTask(String title) async {
+  void _createTask(String title) async {
     final task = await TaskRepository.createTask(
       title: title,
       descrption: "",
@@ -42,7 +52,34 @@ class TaskListState extends State<TaskList> {
     });
   }
 
-  void updateTask(String title, String description, TaskState state) async {}
+  void _updateTask(String title, String description, TaskState state) async {}
+
+  TaskState _nextTaskState(TaskState current) {
+    switch (current) {
+      case TaskState.todo:
+        return TaskState.doing;
+      case TaskState.doing:
+        return TaskState.done;
+      case TaskState.done:
+        return TaskState.todo;
+    }
+  }
+
+  /// stateをtodo -> doing -> done -> todo... の順で遷移させる
+  Future<Task> _changeTaskStateToNext(Task task) async {
+    final nextState = _nextTaskState(task.state);
+    await TaskRepository.update(
+      id: task.id,
+      title: task.title,
+      state: nextState,
+    );
+    return Task(
+        id: task.id,
+        title: task.title,
+        state: nextState,
+        description: task.description,
+        createdAt: task.createdAt);
+  }
 
   void deleteTask(int id) async {}
 
@@ -59,7 +96,7 @@ class TaskListState extends State<TaskList> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Expanded(child: ListView(children: _makeTaskWidgets())),
-            TaskForm(handleSubmit: createTask)
+            TaskForm(handleSubmit: _createTask)
           ],
         ),
       ),
