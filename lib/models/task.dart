@@ -4,7 +4,7 @@ enum TaskState {
   done,
 }
 
-TaskState taskStateFromNum(int number) {
+TaskState taskStateFromNumber(int number) {
   switch (number) {
     case 0:
       return TaskState.todo;
@@ -18,7 +18,7 @@ TaskState taskStateFromNum(int number) {
   }
 }
 
-int taskStateNumFrom(TaskState state) {
+int taskStateNumberFromState(TaskState state) {
   switch (state) {
     case TaskState.todo:
       return 0;

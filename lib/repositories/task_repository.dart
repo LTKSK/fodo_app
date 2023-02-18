@@ -10,7 +10,7 @@ class TaskRepository {
         id: data['id'] as int,
         title: data['title'] as String,
         description: data['description'] as String,
-        state: taskStateFromNum(data['state'] as int),
+        state: taskStateFromNumber(data['state'] as int),
         createdAt: DateFormat('yyyy/MM/dd')
             .format(DateTime.parse(data["created_at"]).toLocal()));
   }
@@ -21,7 +21,7 @@ class TaskRepository {
   }) async {
     final db = await SqliteHelper.db();
 
-    final stateNum = taskStateNumFrom(TaskState.todo);
+    final stateNum = taskStateNumberFromState(TaskState.todo);
     final now = DateTime.now();
     final data = {
       'title': title,
@@ -51,12 +51,14 @@ class TaskRepository {
     return db.query('tasks', where: "id = ?", whereArgs: [id], limit: 1);
   }
 
-  static Future<int> update(int id, String title, String? descrption) async {
+  static Future<int> update(
+      int id, String title, String descrption, TaskState state) async {
     final db = await SqliteHelper.db();
 
     final data = {
       'title': title,
       'description': descrption,
+      'state': taskStateNumberFromState(state),
       'updated_at': DateTime.now().toString()
     };
 

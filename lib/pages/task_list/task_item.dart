@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import '../task_edit/task_edit.dart';
 import '../../models/task.dart';
 
 class TaskItem extends StatelessWidget {
@@ -15,7 +16,12 @@ class TaskItem extends StatelessWidget {
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
-            onPressed: (ctx) => {},
+            onPressed: (ctx) => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TaskEdit(task: task)),
+              )
+            },
             backgroundColor: const Color.fromARGB(255, 167, 167, 167),
             foregroundColor: Colors.white,
             icon: Icons.edit,
