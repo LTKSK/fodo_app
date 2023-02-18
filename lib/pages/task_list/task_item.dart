@@ -6,7 +6,12 @@ import '../../models/task.dart';
 class TaskItem extends StatelessWidget {
   final Task task;
   final void Function() onStateChange;
-  const TaskItem({super.key, required this.task, required this.onStateChange});
+  final void Function() onDelete;
+  const TaskItem(
+      {super.key,
+      required this.task,
+      required this.onStateChange,
+      required this.onDelete});
 
   Color _iconColorFromState(TaskState state) {
     switch (state) {
@@ -51,7 +56,7 @@ class TaskItem extends StatelessWidget {
             label: '編集',
           ),
           SlidableAction(
-            onPressed: (ctx) => {},
+            onPressed: (_) => onDelete(),
             backgroundColor: const Color(0xFFFE4A49),
             foregroundColor: Colors.white,
             icon: Icons.delete,

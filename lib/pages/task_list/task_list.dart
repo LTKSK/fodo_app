@@ -18,16 +18,10 @@ class TaskListState extends State<TaskList> {
   List<Widget> _makeTaskWidgets() {
     return tasks.map((task) {
       return TaskItem(
-          task: task,
-          onStateChange: () async {
-            final updatedTask = await _changeTaskStateToNext(task);
-            setState(() {
-              tasks = tasks.map((task) {
-                if (task.id == updatedTask.id) return updatedTask;
-                return task;
-              }).toList();
-            });
-          });
+        task: task,
+        onStateChange: () => {_changeTaskStateToNext(task)},
+        onDelete: () => _deleteTask(task.id),
+      );
     }).toList();
   }
 
@@ -66,22 +60,33 @@ class TaskListState extends State<TaskList> {
   }
 
   /// stateをtodo -> doing -> done -> todo... の順で遷移させる
-  Future<Task> _changeTaskStateToNext(Task task) async {
+  Future<void> _changeTaskStateToNext(Task task) async {
     final nextState = _nextTaskState(task.state);
     await TaskRepository.update(
       id: task.id,
       title: task.title,
       state: nextState,
     );
-    return Task(
+    final updatedTask = Task(
         id: task.id,
         title: task.title,
         state: nextState,
         description: task.description,
         createdAt: task.createdAt);
+    setState(() {
+      tasks = tasks.map((task) {
+        if (task.id == updatedTask.id) return updatedTask;
+        return task;
+      }).toList();
+    });
   }
 
-  void deleteTask(int id) async {}
+  void _deleteTask(int id) async {
+    await TaskRepository.delete(id);
+    setState(() {
+      tasks = tasks.where((task) => task.id != id).toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
