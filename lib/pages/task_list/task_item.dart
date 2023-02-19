@@ -6,11 +6,14 @@ import '../../models/task.dart';
 class TaskItem extends StatelessWidget {
   final Task task;
   final void Function() onStateChange;
+  final void Function(String title) onTitleChange;
   final void Function() onDelete;
+
   const TaskItem(
       {super.key,
       required this.task,
       required this.onStateChange,
+      required this.onTitleChange,
       required this.onDelete});
 
   Color _iconColorFromState(TaskState state) {
@@ -47,7 +50,11 @@ class TaskItem extends StatelessWidget {
             onPressed: (ctx) => {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => TaskEdit(task: task)),
+                MaterialPageRoute(
+                    builder: (context) => TaskEdit(
+                          task: task,
+                          onTitleChange: onTitleChange,
+                        )),
               )
             },
             backgroundColor: const Color.fromARGB(255, 167, 167, 167),

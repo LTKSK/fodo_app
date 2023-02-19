@@ -20,6 +20,7 @@ class TaskListState extends State<TaskList> {
       return TaskItem(
         task: task,
         onStateChange: () => {_changeTaskStateToNext(task)},
+        onTitleChange: (newTitle) => _updateTaskTitle(task, newTitle),
         onDelete: () => _deleteTask(task.id),
       );
     }).toList();
@@ -46,8 +47,6 @@ class TaskListState extends State<TaskList> {
     });
   }
 
-  void _updateTask(String title, String description, TaskState state) async {}
-
   TaskState _nextTaskState(TaskState current) {
     switch (current) {
       case TaskState.todo:
@@ -71,6 +70,27 @@ class TaskListState extends State<TaskList> {
         id: task.id,
         title: task.title,
         state: nextState,
+        description: task.description,
+        createdAt: task.createdAt);
+    setState(() {
+      tasks = tasks.map((task) {
+        if (task.id == updatedTask.id) return updatedTask;
+        return task;
+      }).toList();
+    });
+  }
+
+  /// stateをtodo -> doing -> done -> todo... の順で遷移させる
+  Future<void> _updateTaskTitle(Task task, String newTitle) async {
+    await TaskRepository.update(
+      id: task.id,
+      title: newTitle,
+      state: task.state,
+    );
+    final updatedTask = Task(
+        id: task.id,
+        title: newTitle,
+        state: task.state,
         description: task.description,
         createdAt: task.createdAt);
     setState(() {
