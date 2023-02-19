@@ -38,6 +38,17 @@ class TaskItem extends StatelessWidget {
     }
   }
 
+  Text _subtitleFromState(TaskState state) {
+    switch (state) {
+      case TaskState.todo:
+        return const Text("これからやる！", style: TextStyle(color: Colors.blueGrey));
+      case TaskState.doing:
+        return const Text("今やってる！", style: TextStyle(color: Colors.orange));
+      case TaskState.done:
+        return const Text("おつかれ！", style: TextStyle(color: Colors.green));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Slidable(
@@ -77,9 +88,10 @@ class TaskItem extends StatelessWidget {
             iconColor: _iconColorFromState(task.state),
             leading: IconButton(
                 icon: _iconFromState(task.state),
-                onPressed: () => {onStateChange()}),
+                onPressed: () => onStateChange()),
             title: Text(task.title),
-            subtitle: Text(task.createdAt),
+            subtitle: _subtitleFromState(task.state),
+            trailing: Text(task.createdAt),
             tileColor: const Color.fromARGB(26, 132, 132, 132),
           )),
     );
