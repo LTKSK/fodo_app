@@ -15,8 +15,14 @@ class TaskList extends StatefulWidget {
 class TaskListState extends State<TaskList> {
   List<Task> tasks = [];
 
+  List<Task> _selectTasksOrderByCreatedAtDesc() {
+    final sorted = [...tasks]
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return sorted;
+  }
+
   List<Widget> _makeTaskWidgets() {
-    return tasks.map((task) {
+    return _selectTasksOrderByCreatedAtDesc().map((task) {
       return TaskItem(
         task: task,
         onStateChange: () => {_changeTaskStateToNext(task)},
@@ -81,23 +87,30 @@ class TaskListState extends State<TaskList> {
   }
 
   /// stateをtodo -> doing -> done -> todo... の順で遷移させる
-  Future<void> _updateTaskTitle(Task task, String newTitle) async {
-    await TaskRepository.update(
+  void _updateTaskTitle(Task task, String newTitle) {
+    if (newTitle == "") {
+      // TODO: 何故かこの分岐のときは表示がされない
+      _showEmptyTaskTitleDialog();
+      return;
+    }
+
+    TaskRepository.update(
       id: task.id,
       title: newTitle,
       state: task.state,
-    );
-    final updatedTask = Task(
-        id: task.id,
-        title: newTitle,
-        state: task.state,
-        description: task.description,
-        createdAt: task.createdAt);
-    setState(() {
-      tasks = tasks.map((task) {
-        if (task.id == updatedTask.id) return updatedTask;
-        return task;
-      }).toList();
+    ).then((_) {
+      final updatedTask = Task(
+          id: task.id,
+          title: newTitle,
+          state: task.state,
+          description: task.description,
+          createdAt: task.createdAt);
+      setState(() {
+        tasks = tasks.map((task) {
+          if (task.id == updatedTask.id) return updatedTask;
+          return task;
+        }).toList();
+      });
     });
   }
 
@@ -106,6 +119,25 @@ class TaskListState extends State<TaskList> {
     setState(() {
       tasks = tasks.where((task) => task.id != id).toList();
     });
+  }
+
+  void _showEmptyTaskTitleDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("ちょっと待って！"),
+          content: const Text("タスクの名前は空にできません"),
+          actions: [
+            TextButton(
+              child: const Text("あいよ!"),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -121,7 +153,13 @@ class TaskListState extends State<TaskList> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Expanded(child: ListView(children: _makeTaskWidgets())),
-            TaskForm(handleSubmit: _createTask)
+            TaskForm(handleSubmit: (title) {
+              if (title == "") {
+                _showEmptyTaskTitleDialog();
+              } else {
+                _createTask(title);
+              }
+            })
           ],
         ),
       ),
